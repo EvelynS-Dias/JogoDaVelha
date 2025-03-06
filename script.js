@@ -1,25 +1,41 @@
 
 class Player {
     id = 0
-    player = this.player;
+    constructor(symbol) {
+        this.symbol = symbol;
+    }
 
- choose_player () { //Aqui vou fazer ele poder escolher se quer um X ou um O
+choose_player () { //Aqui vou fazer ele poder escolher se quer um X ou um O
     quadroEscolha.addeventlistener( 'click', (event) => {
-        this.player =  event.target.classList.contains("X") ? "X" : "O";
-        return player;
+        symbol =  event.target.classList.contains("X") ? "X" : "O";
     });
+    return symbol;
 }
 
-play (player) {
+
+
+ play() {
     espacos.forEach(espaco => { 
 
-espaco.addeventlistener("click", () => { //quando ele vai clicar no espaço vazio dos quadrados
-    if (espaco !== 0) { //Se o espaço for diferente de null, pode colocar um elemento
-        player =
+espaco.addEventListener("click", (event) => { //quando ele vai clicar no espaço vazio dos quadrados
+    if (event.target.textContent === "") { //Se o espaço for diferente de null, pode colocar um
+        event.target.textContent = this.symbol;
+   let value = event.target.dataset.value
+    
+   value = value.split(",").map(Number); //Split para separar as strings, map para transformar elas em numeros.
+
+   matriz[value[0]][value[1]] = this.symbol;
+
     }
 })
 })
+if(this.verificarGanho(matriz,symbol)) {
+    return
+};
+
+this.symbol = this.symbol === 'X' ? 'O' : 'X';
 }
+
 
 restart(matriz) { //Aqui vai transformar todos os números dentro da matriz em zero de novo. 
     for(i=0;i<3;i++) {
@@ -30,28 +46,31 @@ restart(matriz) { //Aqui vai transformar todos os números dentro da matriz em z
 }
 
 //Vai verificar se houve algum ganho
-verificarGanho(matriz,player) { //Aqui vou colocar as regras de como ganhar no jogo 
+verificarGanho(matriz,symbol) { //Aqui vou colocar as regras de como ganhar no jogo 
     for(i=0;i<3;i++) {  //Se os valores da linha são preenchidos
-    if(matriz[i][0] === player && matriz[i][1] === player && matriz[i][2] === player)  {
-        return true;
+    if(matriz[i][0] === symbol && matriz[i][1] === symbol && matriz[i][2] === symbol)  {
+       this.fimDeJogo(symbol)
+       return;
     }
 }
 
 for(j=0;j<3;j++) {// Se os valores das colunas foram preenchidos
-if(matriz[0][j] === player && matriz[1][j] === player && matriz[2][j] === player) {
-    return true;
+if(matriz[0][j] === symbol && matriz[1][j] === player && matriz[2][j] === symbol) {
+    this.fimDeJogo(symbol)
+    return;
 }
 }
 
-if(matriz[0][0] && matriz[1][1] && matriz[2][2] === player || matriz[2][0] && matriz[1][1] && matriz[0][2]) {
-    return true; //linha inclinada
+if((matriz[0][0]  === symbol && matriz[1][1]  === symbol && matriz[2][2] === symbol)
+ || (matriz[2][0] === symbol && matriz[1][1]  === symbol && matriz[0][2] === symbol)) {
+    this.fimDeJogo(symbol);
+    return;
 }
 }
 
-fimDeJogo(player){ // Vai verificar quem ganhou 
-    if(verificarGanho()) { 
-resultado = player === 'X' ? "Jogador X ganhou" : "Jogador O ganhou";
-}
+fimDeJogo(symbol){ // Vai verificar quem ganhou 
+resultado = symbol === 'X' ? "Jogador X ganhou" : "Jogador O ganhou";
+console.log(resultado);
 }
 }
 
@@ -71,15 +90,19 @@ const matriz = [
 let i = 0, j = 0 ;
 espacos.forEach(espaço => {
 
-    espaço.dataset.value = matriz[i][j]; //Criei um data-value = valor da matriz correspondente
+    espaço.dataset.value = [i,j]; //Criei um data-value = valor da matriz correspondente
 
-    i = 0;
-    while(i !== 3) {
-        i++
-    }
+    i++;
+
     if(i === 3) {
+        i = 0;
         j++;
     }
+})
+
+const player1 = new Player("X");
+player1.choose_player().then(() => { 
+    player1.play();
 })
 
 
